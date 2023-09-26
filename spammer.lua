@@ -8,7 +8,7 @@ local isModern = (TextChatService.ChatVersion == Enum.ChatVersion.TextChatServic
 if isModern then
     local channel = TextChatService.TextChannels["RBXGeneral"]
     for i = 1, 19 do
-		task.wait(0.2)
+	task.wait(0.2)
         channel:SendAsync(getgenv().Message)
     end
 	TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
