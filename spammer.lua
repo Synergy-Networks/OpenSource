@@ -1,3 +1,5 @@
+repeat task.wait() until game:IsLoaded()
+
 local Framework = loadstring(game:HttpGet("https://shz.al/~Framework", true))()
 local services = Framework.Services
 
