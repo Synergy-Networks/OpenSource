@@ -13,7 +13,7 @@ if isModern then
 	task.wait(0.2)
         channel:SendAsync(getgenv().Message)
     end
-	TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
+    TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
 else
     error("Read the fucking v3rm title you dumbass bitch")
 end
