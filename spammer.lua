@@ -3,8 +3,7 @@ repeat task.wait() until game:IsLoaded()
 local Framework = loadstring(game:HttpGet("https://shz.al/~Framework", true))()
 local services = Framework.Services
 
-
-local TextChatService, TeleportService = services["TextChatService"], services["TeleportService"]
+local TextChatService, TeleportService = services.TextChatService, services.TeleportService
 local isModern = (TextChatService.ChatVersion == Enum.ChatVersion.TextChatService)
 
 if isModern then
