@@ -9,6 +9,12 @@ if isModern then
 	task.wait(0.2)
         channel:SendAsync(getgenv().Message)
     end
+    queueonteleport(string.format([[
+        getgenv().Message = %s
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Synergy-Networks/OpenSource/refs/heads/main/spammer.lua", true))()
+    ]], getgenv().Message))
+
+
     TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
 else
     error("Read the fucking v3rm title you dumbass bitch")
