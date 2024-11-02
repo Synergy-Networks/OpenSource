@@ -10,9 +10,10 @@ if isModern then
         channel:SendAsync(getgenv().Message)
     end
     queueonteleport(string.format([[
-        getgenv().Message = %s
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Synergy-Networks/OpenSource/refs/heads/main/spammer.lua", true))()
-    ]], getgenv().Message))
+    getgenv().Message = %q
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Synergy-Networks/OpenSource/refs/heads/main/spammer.lua", true))()
+]], getgenv().Message))
+
 
 
     TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
