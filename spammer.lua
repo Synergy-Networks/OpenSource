@@ -6,8 +6,12 @@ local isModern = (TextChatService.ChatVersion == Enum.ChatVersion.TextChatServic
 if isModern then
     local channel = TextChatService.TextChannels["RBXGeneral"]
     for i = 1, 19 do
-	task.wait(0.2)
+	    task.wait(0.2)
+        task.spawn(function()
+            channel:SendAsync("/e hi")
+        end)
         channel:SendAsync(getgenv().Message)
+
     end
     queueonteleport(string.format([[
     getgenv().Message = %q
