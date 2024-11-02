@@ -5,10 +5,10 @@ local isModern = (TextChatService.ChatVersion == Enum.ChatVersion.TextChatServic
 
 if isModern then
     local channel = TextChatService.TextChannels["RBXGeneral"]
-    for i = 1, 30 do
-	    task.wait(0.316)
+    for i = 1, 20 do
+	    task.wait(0.2)
         task.spawn(function()
-            channel:SendAsync("/e hi")
+            channel:SendAsync("/e Hey, how are you doing today?")
         end)
         channel:SendAsync(getgenv().Message)
 
