@@ -24,8 +24,8 @@ local Packages = {
 
 
 local Window = Packages.Rayfield:CreateWindow({
-    Name = "Rizzler [0.0.5]",
-    LoadingTitle = "Rizzler [0.0.5]",
+    Name = "Rizzler [0.0.6]",
+    LoadingTitle = "Rizzler [0.0.6]",
     LoadingSubtitle = "by Synergy Networks",
     ConfigurationSaving = { 
        Enabled = false,
@@ -62,7 +62,7 @@ Tabs.Main:CreateDropdown({
     MultipleOptions = false,
     Flag = "Dropdown1",
     Callback = function(Option)
-        Line = Option
+        Line = Option[1]
     end
 })
 
