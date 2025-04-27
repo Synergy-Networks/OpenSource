@@ -24,8 +24,8 @@ local Packages = {
 
 
 local Window = Packages.Rayfield:CreateWindow({
-    Name = "Rizzler [0.0.6]",
-    LoadingTitle = "Rizzler [0.0.6]",
+    Name = "Rizzler [1.25.1]",
+    LoadingTitle = "Rizzler [1.25.1]",
     LoadingSubtitle = "by Synergy Networks",
     ConfigurationSaving = { 
        Enabled = false,
