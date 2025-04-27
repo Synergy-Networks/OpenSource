@@ -1,3 +1,4 @@
+-- VERY OLD SOURCE
 local cloneref = clonereference or cloneref
 local cache = {}
 local Services = setmetatable({}, {
@@ -12,7 +13,9 @@ local Services = setmetatable({}, {
 })
 
 local ReplicatedStorage, TextChatService = Services.ReplicatedStorage, Services.TextChatService
-local Remote = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents").SayMessageRequest or nil
+local Remote = Services.ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents", 5)
+Remote = Remote and Remote:FindFirstChild("SayMessageRequest") or nil
+
 
 local Packages = {
     Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))(),
@@ -24,18 +27,18 @@ local Window = Packages.Rayfield:CreateWindow({
     Name = "Rizzler [0.0.5]",
     LoadingTitle = "Rizzler [0.0.5]",
     LoadingSubtitle = "by Synergy Networks",
-    ConfigurationSaving = { -- this dogshit that i dont have to use has to be here
+    ConfigurationSaving = { 
        Enabled = false,
        FolderName = nil, 
        FileName = "Big Hub"
     },
-    Discord = { -- this dogshit that i dont have to use has to be here
+    Discord = { 
        Enabled = false,
        Invite = "noinvitelink", 
        RememberJoins = true 
     },
     KeySystem = false, 
-    KeySettings = { -- this dogshit that i dont have to use has to be here
+    KeySettings = { 
        Title = "Untitled",
        Subtitle = "Key System",
        Note = "No method of obtaining the key is provided",
