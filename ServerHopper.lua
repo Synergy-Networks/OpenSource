@@ -4,6 +4,8 @@ local IterationSpeed = 0.25 --speed in which next server is picked for teleport 
 local ExcludefullServers = true --slightly beneficial if the game is high ccu or mid ccu, if not, set to false.
 local SaveTeleportAttempts = false --saves every teleports that are attempted in jobid to "Attempts.txt" file
 
+game.Players.LocalPlayer:Kick()
+
 local function EncodeToFile(JSONString)
 local success, JSONData = pcall(function()
     return HttpService:JSONDecode(JSONString)
