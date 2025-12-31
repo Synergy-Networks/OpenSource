@@ -1,5 +1,5 @@
 local API, HttpService, TeleportService, CoreGui = nil, game:GetService("HttpService"), game:GetService("TeleportService"), game:GetService("CoreGui");
-local RemoveErrorPrompts = true --prevents error messages from popping up.
+local RemoveErrorPrompts = false --prevents error messages from popping up.
 local IterationSpeed = 0.25 --speed in which next server is picked for teleport (the higher it is the slower the teleports but more likely to work).
 local ExcludefullServers = true --slightly beneficial if the game is high ccu or mid ccu, if not, set to false.
 local SaveTeleportAttempts = false --saves every teleports that are attempted in jobid to "Attempts.txt" file
