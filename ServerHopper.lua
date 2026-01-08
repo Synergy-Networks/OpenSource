@@ -47,7 +47,7 @@ local function StartTeleport()
             if SaveTeleportAttempts then
                 appendfile("Attempts.txt", JobId .. "\n")
             end
-            TeleportService:TeleportToPlaceInstance(game.PlaceId, JobId, game.Players.LocalPlayer)
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, JobId, game.Players.LocalPlayer, TeleportService:GetLocalPlayerTeleportData())
             task.wait(IterationSpeed)
         end
     end
