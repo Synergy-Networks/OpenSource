@@ -1,90 +1,120 @@
-local API, HttpService, TeleportService, CoreGui = nil, game:GetService("HttpService"), game:GetService("TeleportService"), game:GetService("CoreGui");
-local RemoveErrorPrompts = false --prevents error messages from popping up.
-local IterationSpeed = 0.25 --speed in which next server is picked for teleport (the higher it is the slower the teleports but more likely to work).
-local ExcludefullServers = true --slightly beneficial if the game is high ccu or mid ccu, if not, set to false.
-local SaveTeleportAttempts = false --saves every teleports that are attempted in jobid to "Attempts.txt" file
+local API
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+local CoreGui = cloneref(game:GetService("CoreGui"))
+local ExperienceService = game:GetService("ExperienceService")
+local Players = game:GetService("Players")
 
-local function EncodeToFile(JSONString)
-local success, JSONData = pcall(function()
-    return HttpService:JSONDecode(JSONString)
-end)
-if success and JSONData.data then
-    JSONData.gameId = game.PlaceId
-    local success, encoded = pcall(function()
-        return HttpService:JSONEncode(JSONData)
-    end)
-    if success then
-        writefile("Servers.JSON", encoded)
-    else
-        error("Failed to encode JSON string.")
-        return
-    end
-else
-    error("Failed to decode JSONData.")
-    return
-end
-return JSONData
-end
-
-local function NextCursor(ep)
-    return game:HttpGet(API .. "&excludeFullGames=" .. tostring(ExcludefullServers) .. ((ep and "&cursor=" .. ep) or ""))
-end
-
-local function StartTeleport()
-    local JSONData = EncodeToFile(readfile("Servers.JSON"))
-    for i = 0, 99 do
-        if #JSONData.data <= 1 then
-            EncodeToFile(NextCursor(JSONData.nextPageCursor))
-            TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
-        end
-        if JSONData.data[i] then
-            local JobId = JSONData.data[i].id
-            table.remove(JSONData.data, i)
-            local sucess, encoded = pcall(function()
-                return HttpService:JSONEncode(JSONData)
-            end)
-            writefile("Servers.JSON", encoded)
-            if SaveTeleportAttempts then
-                appendfile("Attempts.txt", JobId .. "\n")
-            end
-            TeleportService:TeleportToPlaceInstance(game.PlaceId, JobId, game.Players.LocalPlayer, TeleportService:GetLocalPlayerTeleportData())
-            task.wait(IterationSpeed)
-        end
-    end
-end
-
-local function SetMainPage()
-    local MainPage = game:HttpGet(API)
-    writefile("Servers.JSON", MainPage)
-    StartTeleport()
-end
+local RemoveErrorPrompts = true
+local IterationSpeed = 0.25
+local ExcludeFullServers = true
+local SaveTeleportAttempts = false
 
 API = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?limit=100"
 
-if RemoveErrorPrompts then CoreGui:WaitForChild("RobloxGui"):WaitForChild("Modules"):WaitForChild("ErrorPrompt"):Destroy() CoreGui.RobloxPromptGui:Destroy() end
+if RemoveErrorPrompts then
+    pcall(function()
+        CoreGui:WaitForChild("RobloxGui"):WaitForChild("Modules"):WaitForChild("ErrorPrompt"):Destroy()
+    end)
 
-if isfile("Servers.JSON") then
-    local success, JSONData = pcall(function()
+    pcall(function()
+        CoreGui.RobloxPromptGui:Destroy()
+    end)
+end
+
+while true do
+    local Executor = ""
+
+    pcall(function()
+        Executor = string.lower(tostring(identifyexecutor()))
+    end)
+
+    if not isfile("Servers.JSON") then
+        writefile("Servers.JSON", game:HttpGet(API .. "&excludeFullGames=" .. tostring(ExcludeFullServers)))
+    end
+
+    local Success, JSONData = pcall(function()
         return HttpService:JSONDecode(readfile("Servers.JSON"))
     end)
-    if success and JSONData then
-        if JSONData.gameId ~= game.PlaceId then
-            warn("Game mismatch from cache, remaking cache for --> " .. game.PlaceId)
-            SetMainPage()
-        end
-        if JSONData.data and #JSONData.data >= 1 then
-            StartTeleport()
+
+    if not Success or type(JSONData) ~= "table" or JSONData.gameId ~= game.PlaceId then
+        local MainPage = game:HttpGet(API .. "&excludeFullGames=" .. tostring(ExcludeFullServers))
+
+        local DecodeSuccess, Decoded = pcall(function()
+            return HttpService:JSONDecode(MainPage)
+        end)
+
+        if DecodeSuccess and Decoded and Decoded.data then
+            Decoded.gameId = game.PlaceId
+            writefile("Servers.JSON", HttpService:JSONEncode(Decoded))
+            JSONData = Decoded
         else
-            if success and JSONData.nextPageCursor then
-                EncodeToFile(NextCursor(JSONData.nextPageCursor))
-                StartTeleport()
-            else
-                SetMainPage() --no more pages left, start over
-            end
+            task.wait(IterationSpeed)
+            continue
         end
-    else
-        SetMainPage()
     end
-else
-    SetMainPage()
+
+    if not JSONData.data or #JSONData.data < 1 then
+        if JSONData.nextPageCursor then
+            local NextPage = game:HttpGet(API .. "&excludeFullGames=" .. tostring(ExcludeFullServers) .. "&cursor=" .. JSONData.nextPageCursor)
+
+            local DecodeSuccess, Decoded = pcall(function()
+                return HttpService:JSONDecode(NextPage)
+            end)
+
+            if DecodeSuccess and Decoded and Decoded.data then
+                Decoded.gameId = game.PlaceId
+                writefile("Servers.JSON", HttpService:JSONEncode(Decoded))
+                JSONData = Decoded
+            else
+                task.wait(IterationSpeed)
+                continue
+            end
+        else
+            delfile("Servers.JSON")
+            task.wait(IterationSpeed)
+            continue
+        end
+    end
+
+    for I = #JSONData.data, 1, -1 do
+        local Server = JSONData.data[I]
+        local JobId = Server and Server.id
+
+        table.remove(JSONData.data, I)
+        writefile("Servers.JSON", HttpService:JSONEncode(JSONData))
+
+        if JobId and JobId ~= game.JobId then
+            if SaveTeleportAttempts then
+                appendfile("Attempts.txt", JobId .. "\n")
+            end
+
+            if Executor ~= "potassium" then
+                local LaunchSuccess = pcall(function()
+                    ExperienceService:LaunchExperience({
+                        placeId = game.PlaceId,
+                        gameInstanceId = JobId,
+                    })
+                end)
+
+                if not LaunchSuccess then
+                    TeleportService:TeleportToPlaceInstance(
+                        game.PlaceId,
+                        JobId,
+                        Players.LocalPlayer,
+                    )
+                end
+            else
+                TeleportService:TeleportToPlaceInstance(
+                    game.PlaceId,
+                    JobId,
+                    Players.LocalPlayer,
+                )
+            end
+
+            task.wait(IterationSpeed)
+        end
+    end
+
+    task.wait(IterationSpeed)
 end
