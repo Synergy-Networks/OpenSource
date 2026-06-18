@@ -101,14 +101,14 @@ while true do
                     TeleportService:TeleportToPlaceInstance(
                         game.PlaceId,
                         JobId,
-                        Players.LocalPlayer,
+                        Players.LocalPlayer
                     )
                 end
             else
                 TeleportService:TeleportToPlaceInstance(
                     game.PlaceId,
                     JobId,
-                    Players.LocalPlayer,
+                    Players.LocalPlayer
                 )
             end
 
